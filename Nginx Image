@@ -1,0 +1,6 @@
+#Deploy nginx image
+IN your master node run the following commands:
+
+kubectl run --image=nginx nginx-app --port=80
+
+kubectl expose deployment nginx-app --port=80 --name=nginx-http --type LoadBalancer
