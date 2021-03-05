@@ -1,0 +1,51 @@
+# Eks kubernetes Cluster
+
+## Step 1: Creating an EKS role
+
+please follow the steps given below:
+
+Our first step is to set up a new IAM role with EKS permissions.
+Open the IAM console, select Roles on the left and then click the Create Role button at the top of the page.
+From the list of AWS services, select EKS and then Next: Permissions at the bottom of the page.
+Leave the selected policies as-is, and proceed to the Review page.
+Enter a name for the role (e.g eks-cluster-role) and hit the Create role button at the bottom of the page to create the IAM role.
+The IAM role is created.
+
+### Step 2: Creating a VPC for EKS
+
+Open up CloudFormation, and click the Create new stack button.
+On the Select template page, enter the URL of the CloudFormation YAML in the relevant section:
+https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-01-
+09/amazon-eks-vpc-sample.yaml
+Copy
+Click Next.
+Give the VPC a name, leave the default network configurations as-is, and click Next.
+On the Options page, you can leave the default options untouched and then click Next.
+On the Review page, simply hit the Create button to create the VPC.
+
+#### Step 3: Creating the EKS cluster
+
+aws eks --region us-east-1 create-cluster --name demo --role-arn
+arn:aws:iam::011173820421:role/eksServiceRole --resources-vpc-config 
+subnetIds=subnet-06d3631efa685f604,subnet-0f435cf42a1869282,
+subnet-03c954ee389d8f0fd,securityGroupIds=sg-0f45598b6f9aa110a
+
+#### Step 4: Launching Kubernetes worker nodes
+
+Open CloudFormation, click Create Stack, and this time use the following template URL:
+
+https://amazon-eks.s3-us-west-2.amazonaws.com/cloudformation/2019-01-
+09/amazon-eks-nodegroup.yaml
+
+ClusterName – the name of your Kubernetes cluster
+ClusterControlPlaneSecurityGroup – the same security group you used for creating the cluster in previous step.
+NodeGroupName – a name for your node group.
+NodeAutoScalingGroupMinSize – 1. The minimum number of nodes that your worker node Auto Scaling group can scale to.
+NodeAutoScalingGroupDesiredCapacity – leave as-is. The desired number of nodes to scale to when your stack is created.
+NodeAutoScalingGroupMaxSize – 1. The maximum number of nodes that your worker node Auto Scaling group can scale out to.
+NodeInstanceType – leave as-is. The instance type used for the worker nodes.
+NodeImageId – the Amazon EKS worker node AMI ID for the region you’re using. For us-east-1, for example: ami-0c5b63ec54dd3fc38
+KeyName – the name of an Amazon EC2 SSH key pair for connecting with the worker nodes once they launch.
+BootstrapArguments – leave empty. This field can be used to pass optional arguments to the worker nodes bootstrap script.
+VpcId – enter the ID of the VPC you created.
+Subnets – select the three subnets you created.
