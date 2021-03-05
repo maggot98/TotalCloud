@@ -1,6 +1,6 @@
-s_include conf.d/header_logging.js;             # Load JavaScript code from here
-js_set     $access_log_with_headers kvAccessLog; # Fill variable from JS function
-log_format kvpairs $access_log_with_headers;     # Define special log format
+js_include conf.d/header_logging.js;             
+js_set     $access_log_with_headers kvAccessLog; 
+log_format kvpairs $access_log_with_headers;     
 
 server {
     listen 80;
